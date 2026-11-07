@@ -2,186 +2,256 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Annemin Dinlenme Kuponları 💖</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Anne Dinlenme Oyunu 🎮🌸</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #ffe5ec, #ffc2d1);
-            min-height: 100vh;
             margin: 0;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
-            overflow-x: hidden;
+            min-height: 100vh;
+            overflow: hidden;
+            user-select: none;
+            touch-action: none; /* Sayfanın aşağı yukarı kaymasını engeller */
         }
-        .Konteyner {
-            background: white;
-            padding: 25px;
-            border-radius: 25px;
-            box-shadow: 0 10px 25px rgba(251, 111, 146, 0.2);
-            width: 100%;
-            max-width: 450px;
-            text-align: center;
-            border: 2px solid #ffb3c6;
-            box-sizing: border-box;
-        }
-        h1 { color: #fb6f92; margin-bottom: 5px; font-size: 1.6rem; }
-        .Skor-Tabelasi {
-            background-color: #fff0f3;
-            border: 2px dashed #ff8fab;
-            border-radius: 15px;
-            padding: 15px;
-            margin: 20px 0;
-            font-size: 1.4rem;
+        h1 { color: #fb6f92; margin: 5px 0; font-size: 1.5rem; text-align: center; }
+        .Skor-Alani {
+            font-size: 1.2rem;
             font-weight: bold;
-            color: #fb6f92;
+            color: #ff477e;
+            background: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 2px solid #ffb3c6;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
-        #Puan { font-size: 2rem; color: #ff477e; }
-        .Kupon-Listesi {
+        #OyunAlani {
+            width: 100%;
+            max-width: 400px;
+            height: 65vh;
+            background-color: white;
+            border: 3px solid #ff8fab;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(251, 111, 146, 0.2);
+        }
+        #Sepet {
+            width: 80px;
+            height: 45px;
+            background-color: #ff8fab;
+            border-radius: 10px 10px 20px 20px;
+            position: absolute;
+            bottom: 15px;
+            left: 160px;
             display: flex;
-            flex-direction: column;
-            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.6rem;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background-color 0.1s;
         }
-        .Kupon-Buton {
-            background-color: #ffe5ec;
-            border: 2px solid #ff8fab;
-            border-radius: 15px;
-            padding: 12px 15px;
+        .Obje {
+            position: absolute;
+            font-size: 2rem;
+            top: -50px;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        /* Kazandın Ekranı */
+        .Bitis-Ekrani {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(251, 111, 146, 0.95);
+            color: white;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 10;
+            font-size: 1.5rem;
+            font-weight: bold;
+            animation: belirme 0.5s ease-out;
+        }
+        @keyframes belirme { from { opacity: 0; } to { opacity: 1; } }
+        .Yeniden-Buton {
+            margin-top: 20px;
+            padding: 10px 20px;
             font-size: 1rem;
             font-weight: bold;
-            color: #fb6f92;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.2s ease;
-        }
-        .Kupon-Buton:hover:not(:disabled) {
-            transform: scale(1.02);
-            background-color: #ffc2d1;
-            color: white;
-        }
-        .Kupon-Buton:disabled {
-            background-color: #e0e0e0;
-            border-color: #b0b0b0;
-            color: #757575;
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-        .Nadir-Buton {
-            border: 2px solid #ff477e;
-            background-color: #fff0f3;
+            background: white;
             color: #ff477e;
-            position: relative;
-        }
-        .Nadir-Buton:not(:disabled) {
-            animation: parıldama 1s infinite alternate;
-        }
-        @keyframes parıldama {
-            from { box-shadow: 0 0 5px #ff477e; }
-            to { box-shadow: 0 0 15px #ff477e; }
-        }
-        .Puan-Etiketi {
-            padding: 4px 10px;
-            border-radius: 10px;
-            font-size: 0.9rem;
-        }
-        .Arti-Puan { background-color: #d4edda; color: #155724; }
-        .Eksi-Puan { background-color: #f8d7da; color: #721c24; }
-        
-        /* Kazandın Tebrik Ekranı */
-        .Tebrik-Alani {
-            display: none;
-            margin-top: 20px;
-            background: linear-gradient(135deg, #ff477e, #ff7096);
-            color: white;
-            padding: 20px;
-            border-radius: 20px;
-            font-size: 1.3rem;
-            font-weight: bold;
-            animation: kutlama 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-        }
-        @keyframes kutlama {
-            from { transform: scale(0.7); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
 
-<div class="Konteyner">
-    <h1>Annenin Dinlenme Paneli 🌸</h1>
-    <p style="color: #6c757d; margin: 0;">Kuponları kullan, puanları topla!</p>
+    <h1>Anne Dinlenme Oyunu 🎮</h1>
+    <p style="color: #6c757d; margin: 0 0 10px 0; font-size: 0.9rem; text-align: center;">Güzellikleri yakala (+), işleri kaçır (-) ! 50 puana ulaş!</p>
 
-    <div class="Skor-Tabelasi">
-        Mevcut Puanın: <br>
-        <span id="Puan">0</span>
+    <div class="Skor-Alani">Puan: <span id="Skor">0</span></div>
+
+    <div id="OyunAlani">
+        <div id="Sepet">🧺</div>
+        
+        <div id="BitisEkrani" class="Bitis-Ekrani">
+            🎉 BUGÜN DİNLENMEYİ HAKETTİN ANNEM ❤️
+            <br><br>
+            <span style="font-size: 1rem; font-weight: normal;">Harika bir skora ulaştın!</span>
+            <button class="Yeniden-Buton" onclick="OyunuSifirla()">Yeniden Oyna</button>
+        </div>
     </div>
-
-    <div class="Kupon-Listesi">
-        <!-- Normal Butonlar -->
-        <button class="Kupon-Buton" onclick="PuanDegistir(15)">
-            ☕ KAHVE KEYFİ <span class="Puan-Etiketi Arti-Puan">+15</span>
-        </button>
-        <button class="Kupon-Buton" onclick="PuanDegistir(10)">
-            💆 20 DAKİKA MASAJ <span class="Puan-Etiketi Arti-Puan">+10</span>
-        </button>
-        <button class="Kupon-Buton" onclick="PuanDegistir(-10)">
-            🧺 ÇAMAŞIRLARI TOPLA <span class="Puan-Etiketi Eksi-Puan">-10</span>
-        </button>
-        <button class="Kupon-Buton" onclick="PuanDegistir(-5)">
-            👔 ÜTÜ YAP <span class="Puan-Etiketi Eksi-Puan">-5</span>
-        </button>
-        <button class="Kupon-Buton" onclick="PuanDegistir(-15)">
-            🍽️ BULAŞIKLARI YIKA <span class="Puan-Etiketi Eksi-Puan">-15</span>
-        </button>
-        <button class="Kupon-Buton" onclick="PuanDegistir(20)">
-            😴 30 DAKİKA UYKU <span class="Puan-Etiketi Arti-Puan">+20</span>
-        </button>
-
-        <!-- Nadir Butonlar (Başlangıçta Kilitli) -->
-        <button id="Nadir1" class="Kupon-Buton Nadir-Buton" onclick="PuanDegistir(40)" disabled>
-            🔒 SENI COK SEVIYORUZ ANNEM <span class="Puan-Etiketi Arti-Puan">+40</span>
-        </button>
-        <button id="Nadir2" class="Kupon-Buton Nadir-Buton" onclick="PuanDegistir(50)" disabled>
-            🔒 DÜNYANIN EN İYİ ANNESİ <span class="Puan-Etiketi Arti-Puan">+50</span>
-        </button>
-    </div>
-
-    <!-- 50 Puanı Geçince Açılacak Kart -->
-    <div id="TebrikKartı" class="Tebrik-Alani">
-        🎉 BUGÜN DİNLENMEYİ HAKETTİN ANNEM ❤️
-    </div>
-</div>
 
 <script>
-    let toplamPuan = 0;
+    const oyunAlani = document.getElementById('OyunAlani');
+    const sepet = document.getElementById('Sepet');
+    const skorTablosu = document.getElementById('Skor');
+    const bitisEkrani = document.getElementById('BitisEkrani');
 
-    function PuanDegistir(miktar) {
-        toplamPuan += miktar;
-        document.getElementById('Puan').innerText = toplamPuan;
+    let skor = 0;
+    let sepetX = 160;
+    let oyunAktif = true;
+    const sepetGenisligi = 80;
 
-        // Her tıklandığında %25 şansla nadir butonlardan biri aktifleşebilir
-        if(Math.random() < 0.25) {
-            document.getElementById('Nadir1').disabled = false;
-            document.getElementById('Nadir1').innerHTML = "❤️ SENİ ÇOK SEVİYORUZ ANNEM <span class='Puan-Etiketi Arti-Puan'>+40</span>";
-        }
-        if(Math.random() < 0.20) {
-            document.getElementById('Nadir2').disabled = false;
-            document.getElementById('Nadir2').innerHTML = "👑 DÜNYANIN EN İYİ ANNESİ <span class='Puan-Etiketi Arti-Puan'>+50</span>";
-        }
+    // Objelerin listesi ve puan değerleri
+    const objeler = [
+        { ikon: '☕', puan: 10 }, 
+        { ikon: '😴', puan: 15 }, 
+        { ikon: '💆', puan: 10 }, 
+        { ikon: '👔', puan: -5 },  
+        { ikon: '🍽️', puan: -10 }, 
+        { ikon: '🧺', puan: -5 }   
+    ];
 
-        // 50 Puan Kontrolü
-        const tebrikKarti = document.getElementById('TebrikKartı');
-        if (toplamPuan >= 50) {
-            tebrikKarti.style.display = 'block';
-        } else {
-            tebrikKarti.style.display = 'none';
+    // Masaüstü Klavye Kontrolü
+    document.addEventListener('keydown', (e) => {
+        if (!oyunAktif) return;
+        const alanGenisligi = oyunAlani.clientWidth;
+        if (e.key === 'ArrowLeft' && sepetX > 0) {
+            sepetX -= 25;
+        } else if (e.key === 'ArrowRight' && sepetX < (alanGenisligi - sepetGenisligi)) {
+            sepetX += 25;
         }
-    </div>
+        sepet.style.left = sepetX + 'px';
+    });
+
+    // Mobil ve Fare Sürükleme Hatası Tamamen Düzenlendi
+    function SepetiHareketEttir(e) {
+        if (!oyunAktif) return;
+        
+        const alanRect = oyunAlani.getBoundingClientRect();
+        const alanGenisligi = oyunAlani.clientWidth;
+        
+        // Dokunma veya fare koordinatını al
+        let clientX = e.clientX;
+        if (e.touches && e.touches.length > 0) {
+            clientX = e.touches[0].clientX;
+        }
+        
+        // Sepeti parmağın tam ortasına hizala
+        let yeniX = clientX - alanRect.left - (sepetGenisligi / 2);
+        
+        // Sınırların dışına çıkmasını engelle
+        if (yeniX < 0) yeniX = 0;
+        if (yeniX > (alanGenisligi - sepetGenisligi)) yeniX = alanGenisligi - sepetGenisligi;
+        
+        sepetX = yeniX;
+        sepet.style.left = sepetX + 'px';
+    }
+
+    // Olayları oyun alanına bağla
+    oyunAlani.addEventListener('mousemove', SepetiHareketEttir);
+    oyunAlani.addEventListener('touchmove', SepetiHareketEttir, { passive: true });
+    oyunAlani.addEventListener('touchstart', SepetiHareketEttir, { passive: true });
+
+    function ObjeOlustur() {
+        if (!oyunAktif) return;
+
+        const alanGenisligi = oyunAlani.clientWidth;
+        const secilenObje = objeler[Math.floor(Math.random() * objeler.length)];
+        const objeElement = document.createElement('div');
+        objeElement.classList.add('Obje');
+        objeElement.innerText = secilenObje.ikon;
+        
+        const rastgeleX = Math.random() * (alanGenisligi - 35);
+        objeElement.style.left = rastgeleX + 'px';
+        oyunAlani.appendChild(objeElement);
+
+        let objeY = -50;
+        const dusmeHizi = Math.random() * 2 + 4; // Hız biraz optimize edildi
+
+        function Dusur() {
+            if (!oyunAktif) {
+                objeElement.remove();
+                return;
+            }
+
+            objeY += dusmeHizi;
+            objeElement.style.top = objeY + 'px';
+
+            // Geliştirilmiş Çarpışma (Toplama) Testi
+            const sepetUst = oyunAlani.clientHeight - 60;
+            if (objeY >= sepetUst && objeY <= sepetUst + 30) {
+                const objeSol = parseFloat(objeElement.style.left);
+                // Objeyle sepet yan yana denk geliyor mu kontrolü
+                if (objeSol + 35 >= sepetX && objeSol <= sepetX + sepetGenisligi) {
+                    skor += secilenObje.puan;
+                    if (skor < 0) skor = 0; 
+                    skorTablosu.innerText = skor;
+                    
+                    sepet.style.backgroundColor = secilenObje.puan > 0 ? '#4caf50' : '#f44336';
+                    setTimeout(() => sepet.style.backgroundColor = '#ff8fab', 150);
+
+                    objeElement.remove();
+                    PuanKontrol();
+                    return;
+                }
+            }
+
+            if (objeY > oyunAlani.clientHeight) {
+                objeElement.remove();
+            } else {
+                requestAnimationFrame(Dusur);
+            }
+        }
+        requestAnimationFrame(Dusur);
+    }
+
+    function PuanKontrol() {
+        if (skor >= 50) {
+            oyunAktif = false;
+            bitisEkrani.style.display = 'flex';
+        }
+    }
+
+    function OyunuSifirla() {
+        skor = 0;
+        skorTablosu.innerText = skor;
+        bitisEkrani.style.display = 'none';
+        
+        // Ekrandaki eski objeleri temizle
+        document.querySelectorAll('.Obje').forEach(e => e.remove());
+        oyunAktif = true;
+    }
+
+    // Objelerin geliş hızı dengelendi
+    setInterval(ObjeOlustur, 1000);
 </script>
 
 </body>

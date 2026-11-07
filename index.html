@@ -16,7 +16,7 @@
             min-height: 100vh;
             overflow: hidden;
             user-select: none;
-            touch-action: none; /* Sayfanın aşağı yukarı kaymasını engeller */
+            touch-action: none;
         }
         h1 { color: #fb6f92; margin: 5px 0; font-size: 1.5rem; text-align: center; }
         .Skor-Alani {
@@ -32,8 +32,8 @@
         }
         #OyunAlani {
             width: 100%;
-            max-width: 400px;
-            height: 65vh;
+            max-width: 360px;
+            height: 55vh;
             background-color: white;
             border: 3px solid #ff8fab;
             border-radius: 20px;
@@ -47,25 +47,50 @@
             background-color: #ff8fab;
             border-radius: 10px 10px 20px 20px;
             position: absolute;
-            bottom: 15px;
-            left: 160px;
+            bottom: 10px;
+            left: 140px;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 1.6rem;
             color: white;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: background-color 0.1s;
+            transition: left 0.1s ease-out, background-color 0.1s;
         }
         .Obje {
             position: absolute;
-            font-size: 2rem;
+            font-size: 2.2rem;
             top: -50px;
-            width: 35px;
-            height: 35px;
+            width: 40px;
+            height: 40px;
             display: flex;
             justify-content: center;
             align-items: center;
+        }
+        /* Mobil Butonlar Alanı */
+        .Buton-Alani {
+            display: flex;
+            gap: 30px;
+            margin-top: 15px;
+            width: 100%;
+            max-width: 360px;
+            justify-content: center;
+        }
+        .Yon-Buton {
+            background-color: #ff8fab;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            padding: 15px 35px;
+            border-radius: 15px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            active: transform: scale(0.95);
+        }
+        .Yon-Buton:active {
+            background-color: #ff477e;
+            transform: scale(0.95);
         }
         /* Kazandın Ekranı */
         .Bitis-Ekrani {
@@ -103,7 +128,7 @@
 <body>
 
     <h1>Anne Dinlenme Oyunu 🎮</h1>
-    <p style="color: #6c757d; margin: 0 0 10px 0; font-size: 0.9rem; text-align: center;">Güzellikleri yakala (+), işleri kaçır (-) ! 50 puana ulaş!</p>
+    <p style="color: #6c757d; margin: 0 0 10px 0; font-size: 0.9rem; text-align: center;">Aşağıdaki butonlarla sepeti yönet! 50 puana ulaş!</p>
 
     <div class="Skor-Alani">Puan: <span id="Skor">0</span></div>
 
@@ -118,6 +143,12 @@
         </div>
     </div>
 
+    <!-- Yeni Eklenen Dokunmatik Butonlar -->
+    <div class="Buton-Alani">
+        <button class="Yon-Buton" ontouchstart="ButonlaHareket(-1)" onclick="ButonlaHareket(-1)">◀</button>
+        <button class="Yon-Buton" ontouchstart="ButonlaHareket(1)" onclick="ButonlaHareket(1)">▶</button>
+    </div>
+
 <script>
     const oyunAlani = document.getElementById('OyunAlani');
     const sepet = document.getElementById('Sepet');
@@ -125,11 +156,11 @@
     const bitisEkrani = document.getElementById('BitisEkrani');
 
     let skor = 0;
-    let sepetX = 160;
+    let sepetX = 140;
     let oyunAktif = true;
     const sepetGenisligi = 80;
+    const adimMiktari = 35; // Her basışta kaç piksel kaysın
 
-    // Objelerin listesi ve puan değerleri
     const objeler = [
         { ikon: '☕', puan: 10 }, 
         { ikon: '😴', puan: 15 }, 
@@ -139,46 +170,25 @@
         { ikon: '🧺', puan: -5 }   
     ];
 
-    // Masaüstü Klavye Kontrolü
-    document.addEventListener('keydown', (e) => {
+    // Butonla Hareket Etme Fonksiyonu (Hem bilgisayar hem mobil için)
+    function ButonlaHareket(yon) {
         if (!oyunAktif) return;
         const alanGenisligi = oyunAlani.clientWidth;
-        if (e.key === 'ArrowLeft' && sepetX > 0) {
-            sepetX -= 25;
-        } else if (e.key === 'ArrowRight' && sepetX < (alanGenisligi - sepetGenisligi)) {
-            sepetX += 25;
-        }
-        sepet.style.left = sepetX + 'px';
-    });
-
-    // Mobil ve Fare Sürükleme Hatası Tamamen Düzenlendi
-    function SepetiHareketEttir(e) {
-        if (!oyunAktif) return;
         
-        const alanRect = oyunAlani.getBoundingClientRect();
-        const alanGenisligi = oyunAlani.clientWidth;
+        sepetX += yon * adimMiktari;
         
-        // Dokunma veya fare koordinatını al
-        let clientX = e.clientX;
-        if (e.touches && e.touches.length > 0) {
-            clientX = e.touches[0].clientX;
-        }
+        // Sınır kontrolü
+        if (sepetX < 0) sepetX = 0;
+        if (sepetX > (alanGenisligi - sepetGenisligi)) sepetX = alanGenisligi - sepetGenisligi;
         
-        // Sepeti parmağın tam ortasına hizala
-        let yeniX = clientX - alanRect.left - (sepetGenisligi / 2);
-        
-        // Sınırların dışına çıkmasını engelle
-        if (yeniX < 0) yeniX = 0;
-        if (yeniX > (alanGenisligi - sepetGenisligi)) yeniX = alanGenisligi - sepetGenisligi;
-        
-        sepetX = yeniX;
         sepet.style.left = sepetX + 'px';
     }
 
-    // Olayları oyun alanına bağla
-    oyunAlani.addEventListener('mousemove', SepetiHareketEttir);
-    oyunAlani.addEventListener('touchmove', SepetiHareketEttir, { passive: true });
-    oyunAlani.addEventListener('touchstart', SepetiHareketEttir, { passive: true });
+    // Klavye Kontrolü (Bilgisayar için yedek)
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') ButonlaHareket(-1);
+        if (e.key === 'ArrowRight') ButonlaHareket(1);
+    });
 
     function ObjeOlustur() {
         if (!oyunAktif) return;
@@ -189,12 +199,12 @@
         objeElement.classList.add('Obje');
         objeElement.innerText = secilenObje.ikon;
         
-        const rastgeleX = Math.random() * (alanGenisligi - 35);
+        const rastgeleX = Math.random() * (alanGenisligi - 40);
         objeElement.style.left = rastgeleX + 'px';
         oyunAlani.appendChild(objeElement);
 
         let objeY = -50;
-        const dusmeHizi = Math.random() * 2 + 4; // Hız biraz optimize edildi
+        const dusmeHizi = Math.random() * 2 + 3; 
 
         function Dusur() {
             if (!oyunAktif) {
@@ -205,12 +215,12 @@
             objeY += dusmeHizi;
             objeElement.style.top = objeY + 'px';
 
-            // Geliştirilmiş Çarpışma (Toplama) Testi
-            const sepetUst = oyunAlani.clientHeight - 60;
-            if (objeY >= sepetUst && objeY <= sepetUst + 30) {
+            // Garanti Çarpışma Testi (Yakalama alanı dikeyde genişletildi)
+            const sepetUst = oyunAlani.clientHeight - 65;
+            if (objeY >= sepetUst && objeY <= sepetUst + 35) {
                 const objeSol = parseFloat(objeElement.style.left);
-                // Objeyle sepet yan yana denk geliyor mu kontrolü
-                if (objeSol + 35 >= sepetX && objeSol <= sepetX + sepetGenisligi) {
+                
+                if (objeSol + 40 >= sepetX && objeSol <= sepetX + sepetGenisligi) {
                     skor += secilenObje.puan;
                     if (skor < 0) skor = 0; 
                     skorTablosu.innerText = skor;
@@ -244,14 +254,11 @@
         skor = 0;
         skorTablosu.innerText = skor;
         bitisEkrani.style.display = 'none';
-        
-        // Ekrandaki eski objeleri temizle
         document.querySelectorAll('.Obje').forEach(e => e.remove());
         oyunAktif = true;
     }
 
-    // Objelerin geliş hızı dengelendi
-    setInterval(ObjeOlustur, 1000);
+    setInterval(ObjeOlustur, 1200);
 </script>
 
 </body>
